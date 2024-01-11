@@ -11,6 +11,7 @@ function Preview({ code, device }: Props) {
   const throttledCode = code;
   // Temporary disable throttling for the preview not updating when the code changes
   // useThrottle(code, 200);
+  // console.log(throttledCode);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   useEffect(() => {

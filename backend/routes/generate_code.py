@@ -8,7 +8,7 @@ from openai.types.chat import ChatCompletionMessageParam
 from mock_llm import mock_completion
 from typing import Dict, List
 from image_generation import create_alt_url_mapping, generate_images
-from prompts import assemble_imported_code_prompt, assemble_prompt
+from prompts import assemble_imported_code_prompt, assemble_prompt,assemble_imported_code_prompt_langchain
 from access_token import validate_access_token
 from datetime import datetime
 import json
@@ -52,6 +52,7 @@ async def stream_code(websocket: WebSocket):
 
     # TODO: Are the values always strings?
     params: Dict[str, str] = await websocket.receive_json()
+    
 
     print("Received params")
 
@@ -130,9 +131,13 @@ async def stream_code(websocket: WebSocket):
     # If this generation started off with imported code, we need to assemble the prompt differently
     if params.get("isImportedFromCode") and params["isImportedFromCode"]:
         original_imported_code = params["history"][0]
-        prompt_messages = assemble_imported_code_prompt(
+        prompt_messages = assemble_imported_code_prompt_langchain(
             original_imported_code, generated_code_config
         )
+        print(f"prompt_messages:{prompt_messages}")
+        # prompt_messages = assemble_imported_code_prompt(
+        #     original_imported_code, generated_code_config
+        # )
         for index, text in enumerate(params["history"][1:]):
             if index % 2 == 0:
                 message: ChatCompletionMessageParam = {
